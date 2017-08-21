@@ -1,28 +1,29 @@
 import logging
+
 logger = logging.getLogger(__name__)
 
 config_slack_groovy = """\
 jenkins = jenkins.model.Jenkins.getInstance()
-try{{
+try{
 slack = jenkins.getDescriptorByType(jenkins.plugins.slack.SlackNotifier.DescriptorImpl)
-if(slack.teamDomain.equals("{team_domain}") &&
-   slack.token.equals("{token}") &&
-   slack.tokenCredentialId.equals("{token_credential_id}") &&
-   slack.room.equals("{room}") &&
-   slack.sendAs.equals("{send_as}")){{
+if(slack.teamDomain.equals("${team_domain}") &&
+   slack.token.equals("${token}") &&
+   slack.tokenCredentialId.equals("${token_credential_id}") &&
+   slack.room.equals("${room}") &&
+   slack.sendAs.equals("${send_as}")){
         print("EXISTS")
-}}else{{
-    slack.teamDomain = "{team_domain}"
-    slack.token = "{token}"
-    slack.tokenCredentialId = "{token_credential_id}"
-    slack.room = "{room}"
-    slack.sendAs = "{send_as}"
+}else{
+    slack.teamDomain = "${team_domain}"
+    slack.token = "${token}"
+    slack.tokenCredentialId = "${token_credential_id}"
+    slack.room = "${room}"
+    slack.sendAs = "${send_as}"
     slack.save()
     print("SUCCESS")
-}}
-}}catch(all){{
+}
+}catch(all){
     print("Cannot instantiate Jenkins Slack plugin, maybe plugin is not installed")
-}}
+}
 """ # noqa
 
 

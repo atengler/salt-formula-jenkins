@@ -1,4 +1,5 @@
 import logging
+
 logger = logging.getLogger(__name__)
 
 config_global_libs_groovy = """\
@@ -7,47 +8,47 @@ import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration;
 import jenkins.plugins.git.GitSCMSource;
 
 def globalLibsDesc = Jenkins.getInstance().getDescriptor("org.jenkinsci.plugins.workflow.libs.GlobalLibraries")
-def existingLib = globalLibsDesc.get().getLibraries().find{{
+def existingLib = globalLibsDesc.get().getLibraries().find{
   (!it.retriever.class.name.equals("org.jenkinsci.plugins.workflow.libs.SCMSourceRetriever") || 
-   it.retriever.scm.remote.equals("{url}") &&
-   it.retriever.scm.credentialsId.equals("{credential_id}")) &&
-   it.name.equals("{lib_name}") &&
-   it.defaultVersion.equals("{branch}") &&
+   it.retriever.scm.remote.equals("${url}") &&
+   it.retriever.scm.credentialsId.equals("${credential_id}")) &&
+   it.name.equals("${lib_name}") &&
+   it.defaultVersion.equals("${branch}") &&
    it.implicit == true
-}}
-if(existingLib){{
+}
+if(existingLib){
     print("EXISTS")
-}}else{{
+}else{
     SCMSourceRetriever retriever = new SCMSourceRetriever(new GitSCMSource(
-        "{lib_name}",
-        "{url}",
-        "{credential_id}",
+        "${lib_name}",
+        "${url}",
+        "${credential_id}",
         "*",
         "",
         false))
-    LibraryConfiguration library = new LibraryConfiguration("{lib_name}", retriever)
-    library.setDefaultVersion("{branch}")
+    LibraryConfiguration library = new LibraryConfiguration("${lib_name}", retriever)
+    library.setDefaultVersion("${branch}")
     library.setImplicit({implicit})
-    if(globalLibsDesc.get().getLibraries().isEmpty()){{
+    if(globalLibsDesc.get().getLibraries().isEmpty()){
       globalLibsDesc.get().setLibraries([library])
-    }}else{{
-      globalLibsDesc.get().getLibraries().removeIf{{ it.name.equals("{lib_name}")}}
+    }else{
+      globalLibsDesc.get().getLibraries().removeIf{ it.name.equals("${lib_name}")}
       globalLibsDesc.get().getLibraries().add(library)
-    }}
+    }
     globalLibsDesc.save()
     print("SUCCESS")
-}}
+}
 """ # noqa
 
 remove_global_libs_groovy = """\
 def globalLibsDesc = Jenkins.getInstance().getDescriptor("org.jenkinsci.plugins.workflow.libs.GlobalLibraries")
-def existingLib = globalLibsDesc.get().getLibraries().removeIf{{it.name.equals("{lib_name}")}}
-if(existingLib){{
+def existingLib = globalLibsDesc.get().getLibraries().removeIf{it.name.equals("${lib_name}")}
+if(existingLib){
     globalLibsDesc.save()
     print("DELETED")
-}}else{{
+}else{
     print("NOT PRESENT")
-}}
+}
 """
 
 

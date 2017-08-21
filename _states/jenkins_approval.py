@@ -1,51 +1,52 @@
 import logging
+
 logger = logging.getLogger(__name__)
 
 approve_signature_groovy = """\
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext
-def signature = '{signature}'
+def signature = '${signature}'
 def scriptApproval = ScriptApproval.get()
 def approvedSignatures = Arrays.asList(scriptApproval.approvedSignatures)
-if(approvedSignatures.contains(signature)){{
+if(approvedSignatures.contains(signature)){
     print("EXISTS")
-}}else{{
-    try{{
+}else{
+    try{
         scriptApproval.pendingSignatures.add(new ScriptApproval.PendingSignature(signature, false, ApprovalContext.create()))
         scriptApproval.approveSignature(signature)
-        if(Arrays.asList(scriptApproval.approvedSignatures).contains(signature)){{
+        if(Arrays.asList(scriptApproval.approvedSignatures).contains(signature)){
             print("SUCCESS")
-        }}else{{
+        }else{
             print("FAILED")
-        }}
-    }}catch(e){{
+        }
+    }catch(e){
         print(e)
-    }}
-}}
+    }
+}
 """ # noqa
 
 deny_signature_groovy = """\
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
 import org.jenkinsci.plugins.scriptsecurity.scripts.languages.GroovyLanguage
 import org.jenkinsci.plugins.scriptsecurity.scripts.ApprovalContext
-def signature = '{signature}'
+def signature = '${signature}'
 def scriptApproval = ScriptApproval.get()
 def approvedSignatures = Arrays.asList(scriptApproval.approvedSignatures)
-if(approvedSignatures.contains(signature)){{
-    try{{
+if(approvedSignatures.contains(signature)){
+    try{
         scriptApproval.denySignature(signature)
-        if(!scriptApproval.approvedSignatures.contains(signature)){{
+        if(!scriptApproval.approvedSignatures.contains(signature)){
             print("SUCCESS")
-        }}else{{
+        }else{
             print("FAILED")
-        }}
-    }}catch(e){{
+        }
+    }catch(e){
         print(e)
-    }}
-}}else{{
+    }
+}else{
     print("NOT PRESENT")
-}}
+}
 
 
 """

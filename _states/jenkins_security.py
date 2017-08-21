@@ -1,4 +1,5 @@
 import logging
+
 logger = logging.getLogger(__name__)
 
 set_ldap_groovy = """\
@@ -6,24 +7,24 @@ import jenkins.model.*
 import hudson.security.*
 import org.jenkinsci.plugins.*
 
-def server = '{server}'
-def rootDN = '{rootDN}'
-def userSearchBase = '{userSearchBase}'
-def userSearch = '{userSearch}'
-def groupSearchBase = '{groupSearchBase}'
-def managerDN = '{managerDN}'
-def managerPassword = '{managerPassword}'
+def server = '${server}'
+def rootDN = '${rootDN}'
+def userSearchBase = '${userSearchBase}'
+def userSearch = '${userSearch}'
+def groupSearchBase = '${groupSearchBase}'
+def managerDN = '${managerDN}'
+def managerPassword = '${managerPassword}'
 boolean inhibitInferRootDN = {inhibitInferRootDN}
 
-try{{
+try{
 ldapRealm = Class.forName("hudson.security.LDAPSecurityRealm").getConstructor(String.class, String.class, String.class, String.class, String.class, String.class, String.class, Boolean.TYPE)
 .newInstance(server, rootDN, userSearchBase, userSearch, groupSearchBase, managerDN, managerPassword, inhibitInferRootDN) 
 Jenkins.instance.setSecurityRealm(ldapRealm)
 Jenkins.instance.save()
 print("SUCCESS")
-}}catch(ClassNotFoundException e){{
+}catch(ClassNotFoundException e){
     print("Cannot instantiate LDAPSecurityRealm, maybe ldap plugin not installed")
-}}
+}
 """  # noqa
 
 set_matrix_groovy = """\
@@ -32,15 +33,15 @@ import hudson.security.*
 import com.cloudbees.plugins.credentials.*
 
 def instance = Jenkins.getInstance()
-try{{
-def strategy = Class.forName("hudson.security.{matrix_class}").newInstance()
-{strategies}
+try{
+def strategy = Class.forName("hudson.security.${matrix_class}").newInstance()
+${strategies}
 instance.setAuthorizationStrategy(strategy)
 instance.save()
 print("SUCCESS")
-}}catch(ClassNotFoundException e){{
-    print("Cannot instantiate {matrix_class}, maybe auth-matrix plugin not installed")
-}}
+}catch(ClassNotFoundException e){
+    print("Cannot instantiate ${matrix_class}, maybe auth-matrix plugin not installed")
+}
 """  # noqa
 
 

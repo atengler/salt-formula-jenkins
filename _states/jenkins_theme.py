@@ -2,25 +2,25 @@ import logging
 logger = logging.getLogger(__name__)
 
 set_theme_groovy = """\
-try{{
-    if(Class.forName("org.codefirst.SimpleThemeDecorator")){{
+try{
+    if(Class.forName("org.codefirst.SimpleThemeDecorator")){
         def state;
-        for (pd in PageDecorator.all()) {{
-          if (pd instanceof org.codefirst.SimpleThemeDecorator) {{
-            if(!pd.cssUrl.equals("{css_url}") || !pd.jsUrl.equals("{js_url}")){{
-                pd.cssUrl = "{css_url}"
-                pd.jsUrl = "{js_url}"
+        for (pd in PageDecorator.all()) {
+          if (pd instanceof org.codefirst.SimpleThemeDecorator) {
+            if(!pd.cssUrl.equals("${css_url}") || !pd.jsUrl.equals("${js_url}")){
+                pd.cssUrl = "${css_url}"
+                pd.jsUrl = "${js_url}"
                 state="SUCCESS"
-            }}else{{
+            }else{
                 state="EXISTS"
-            }}
-          }}
-        }}
+            }
+          }
+        }
         print(state)
-    }}
-}}catch(ClassNotFoundException e){{
+    }
+}catch(ClassNotFoundException e){
     print("Cannot user SimpleThemeDecorator, maybe Simple Theme Plugin not installed")
-}}
+}
 """ # noqa
 
 def __virtual__():

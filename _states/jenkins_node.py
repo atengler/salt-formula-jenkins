@@ -1,6 +1,6 @@
 import logging
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 create_node_groovy = u"""\
 import jenkins.model.*
@@ -8,48 +8,48 @@ import hudson.model.*
 import hudson.slaves.*
 import hudson.plugins.sshslaves.*
 
-def result=Jenkins.instance.slaves.find{{
+def result=Jenkins.instance.slaves.find{
  it.name == '{name}' &&
  it.numExecutors == {num_executors} &&
- it.nodeDescription == "{desc}" &&
- it.remoteFS == "{remote_home}" &&
- it.labelString == "{label}" &&
+ it.nodeDescription == "${desc}" &&
+ it.remoteFS == "${remote_home}" &&
+ it.labelString == "${label}" &&
  it.mode == Node.Mode.{node_mode} &&
  it.launcher.getClass().getName().equals({launcher}.getClass().getName()) &&
- it.retentionStrategy.getClass().getName().equals(new hudson.slaves.RetentionStrategy.{ret_strategy}().getClass().getName())}}
-if(result){{
+ it.retentionStrategy.getClass().getName().equals(new hudson.slaves.RetentionStrategy.${ret_strategy}().getClass().getName())}
+if(result){
     print("EXISTS")
-}}else{{
+}else{
   Slave slave = new DumbSlave(
-                    "{name}",
-                    "{desc}",
-                    "{remote_home}",
-                    "{num_executors}",
-                    Node.Mode.{node_mode},
-                    "{label}",
-                    {launcher},
-                    new RetentionStrategy.{ret_strategy}(),
+                    "${name}",
+                    "${desc}",
+                    "${remote_home}",
+                    "${num_executors}",
+                    Node.Mode.${node_mode},
+                    "${label}",
+                    ${launcher},
+                    new RetentionStrategy.${ret_strategy}(),
                     new LinkedList())
   Jenkins.instance.addNode(slave)
   print("CREATED")
-}}
+}
 """  # noqa
 
 create_lbl_groovy = u"""\
 hudson = hudson.model.Hudson.instance
 updated = false
-hudson.slaves.find {{ slave -> slave.nodeName.equals("{name}")
-  if({append}){{
-    slave.labelString = slave.labelString + " " + "{lbl_text}"
-  }}else{{
-    slave.labelString = "{lbl_text}"
-  }}
+hudson.slaves.find { slave -> slave.nodeName.equals("${name}")
+  if({append}){
+    slave.labelString = slave.labelString + " " + "${lbl_text}"
+  }else{
+    slave.labelString = "${lbl_text}"
+  }
   updated = true
-  print "{lbl_text}"
-}}
-if(!updated){{
+  print "${lbl_text}"
+}
+if(!updated){
     print "FAILED"
-}}
+}
 hudson.save()
 """  # noqa
 
@@ -57,26 +57,26 @@ configure_master_groovy = u"""\
 def instance = Jenkins.instance
 def changed = false
 
-if(Jenkins.instance.numExecutors != {num_executors}){{
-    Jenkins.instance.setNumExecutors({num_executors})
+if(Jenkins.instance.numExecutors != ${num_executors}){
+    Jenkins.instance.setNumExecutors(${num_executors})
     changed = true
-}}
+}
 
-if(!Jenkins.instance.mode.name.equals(new String("{node_mode}").toUpperCase())){{
-    Jenkins.instance.setMode(Node.Mode.{node_mode})
+if(!Jenkins.instance.mode.name.equals(new String("${node_mode}").toUpperCase())){
+    Jenkins.instance.setMode(Node.Mode.${node_mode})
     changed = true
-}}
+}
 
-if(!Jenkins.instance.labelString.equals("{labels}")){{
-    Jenkins.instance.setLabelString("{labels}")
+if(!Jenkins.instance.labelString.equals("${labels}")){
+    Jenkins.instance.setLabelString("${labels}")
     changed = true
-}}
-if(changed){{
+}
+if(changed){
     Jenkins.instance.save()
     print("CREATED")
-}}else{{
+}else{
     print("EXISTS")
-}}
+}
 """
 
 

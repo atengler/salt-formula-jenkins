@@ -1,6 +1,7 @@
 import logging
 
 from salt.exceptions import SaltInvocationError
+from string import Template
 
 try:
     import bcrypt
@@ -80,15 +81,16 @@ def call_groovy_script(script, props, username=None, password=None, success_stat
     return ret
 
 
-def render_groovy_script(script, props):
+def render_groovy_script(script_template, props):
     """
     Helper method for rendering groovy script with props
 
-    :param script: groovy script template
+    :param script_template: groovy script template
     :param props: groovy script properties
     :returns: generated groovy script
     """
-    return script.format(**props)
+    template = Template(script_template)
+    return template.safe_substitute(props)
 
 
 def get_api_crumb(jenkins_url=None, jenkins_user=None, jenkins_password=None):

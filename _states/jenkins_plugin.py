@@ -1,4 +1,5 @@
 import logging
+
 logger = logging.getLogger(__name__)
 
 install_plugin_groovy = """\
@@ -8,42 +9,42 @@ import java.util.logging.Logger
 def logger = Logger.getLogger("")
 def installed = false
 def exists = false
-def pluginName="{plugin}"
+def pluginName="${plugin}"
 def instance = Jenkins.getInstance()
 def pm = instance.getPluginManager()
 def uc = instance.getUpdateCenter()
-def needUpdateSites(maxOldInSec = 1800){{
+def needUpdateSites(maxOldInSec = 1800){
   long oldestTs = 0
-  for (UpdateSite s : Jenkins.instance.updateCenter.siteList) {{
-    if(oldestTs == 0 || s.getDataTimestamp()<oldestTs){{
+  for (UpdateSite s : Jenkins.instance.updateCenter.siteList) {
+    if(oldestTs == 0 || s.getDataTimestamp()<oldestTs){
        oldestTs = s.getDataTimestamp()
-    }}
-  }}
+    }
+  }
    return (System.currentTimeMillis()-oldestTs)/1000 > maxOldInSec
-}}
+}
 
-if (!pm.getPlugin(pluginName)) {{
-  if(needUpdateSites()) {{
+if (!pm.getPlugin(pluginName)) {
+  if(needUpdateSites()) {
      uc.updateAllSites()
-  }}
+  }
   def plugin = uc.getPlugin(pluginName)
-  if (plugin) {{
+  if (plugin) {
     plugin.deploy()
     installed = true
-  }}
-}}else{{
+  }
+}else{
     exists = true
     print("EXISTS")
-}}
-if (installed) {{
+}
+if (installed) {
   instance.save()
-  if({restart}){{
+  if({restart}){
       instance.doSafeRestart()
-   }}
+   }
   print("INSTALLED")
-}}else if(!exists){{
+}else if(!exists){
   print("FAILED")
-}}
+}
 """ # noqa
 
 remove_plugin_groovy = """
@@ -54,26 +55,26 @@ def logger = Logger.getLogger("")
 def installed = false
 def initialized = false
 
-def pluginName="{plugin}"
+def pluginName="${plugin}"
 def instance = Jenkins.getInstance()
 def pm = instance.getPluginManager()
 
 def actPlugin = pm.getPlugin(pluginName)
-if (!actPlugin) {{
+if (!actPlugin) {
    def pluginToInstall = Jenkins.instance.updateCenter.getPlugin(pluginName)
-   if(!pluginToInstall){{
+   if(!pluginToInstall){
       print("FAILED")
-   }}else{{
+   }else{
       print("NOT PRESENT")
-   }}
-}} else {{
+   }
+} else {
    actPlugin.disable()
    actPlugin.archive.delete()
-   if({restart}){{
+   if({restart}){
       instance.doSafeRestart()
-   }}
+   }
    print("REMOVED")
-}}
+}
 """ # noqa
 
 

@@ -1,73 +1,75 @@
 import logging
+
 from json import dumps
+
 logger = logging.getLogger(__name__)
 
 add_view_groovy = """\
 import java.util.stream.Collectors
 import org.jenkinsci.plugins.categorizedview.CategorizedJobsView
 import org.jenkinsci.plugins.categorizedview.GroupingRule
-view = Jenkins.instance.getView("{view_name}")
-if(view){{
-  if(view.getClass().getName().equals("hudson.model.ListView")){{
-    include_regex="{include_regex}"
-    if(include_regex != "" && !view.getIncludeRegex().equals(include_regex)){{
+view = Jenkins.instance.getView("${view_name}")
+if(view){
+  if(view.getClass().getName().equals("hudson.model.ListView")){
+    include_regex="${include_regex}"
+    if(include_regex != "" && !view.getIncludeRegex().equals(include_regex)){
         view.setIncludeRegex(include_regex)
         print("ADDED/CHANGED")
-    }}else{{
+    }else{
         print("EXISTS")
-    }}
-  }}else if(view.getClass().getName().equals("org.jenkinsci.plugins.categorizedview.CategorizedJobsView")){{
+    }
+  }else if(view.getClass().getName().equals("org.jenkinsci.plugins.categorizedview.CategorizedJobsView")){
     def jsonSlurper = new groovy.json.JsonSlurper()
-    def inputCategories = jsonSlurper.parseText('{categories_string}')
-    def groupRegexes = inputCategories.stream().map{{e -> e["group_regex"]}}.collect(Collectors.toList())
-    def namingRules = inputCategories.stream().map{{e -> e["naming_rule"]}}.collect(Collectors.toList())
+    def inputCategories = jsonSlurper.parseText('${categories_string}')
+    def groupRegexes = inputCategories.stream().map{e -> e["group_regex"]}.collect(Collectors.toList())
+    def namingRules = inputCategories.stream().map{e -> e["naming_rule"]}.collect(Collectors.toList())
     def actualCategories = view.categorizationCriteria
     def equals = !actualCategories.isEmpty()
-    def include_regex="{include_regex}"
-    if(include_regex != "" && !view.getIncludeRegex().equals(include_regex)){{
+    def include_regex="${include_regex}"
+    if(include_regex != "" && !view.getIncludeRegex().equals(include_regex)){
         view.setIncludeRegex(include_regex)
         equals = false
-    }}
-    for(int i=0;i<actualCategories.size();i++){{
-      if(!groupRegexes.contains(actualCategories[i].groupRegex) || !namingRules.contains(actualCategories[i].namingRule)){{
+    }
+    for(int i=0;i<actualCategories.size();i++){
+      if(!groupRegexes.contains(actualCategories[i].groupRegex) || !namingRules.contains(actualCategories[i].namingRule)){
         equals = false
-      }}
-    }}
-    if(!equals){{
+      }
+    }
+    if(!equals){
       view.categorizationCriteria.clear()
-      for(int i=0;i<inputCategories.size();i++){{
+      for(int i=0;i<inputCategories.size();i++){
         view.categorizationCriteria.add(new GroupingRule(inputCategories[i].group_regex,inputCategories[i].naming_rule))
-      }}
+      }
       print("ADDED/CHANGED")
-    }}else{{
+    }else{
       print("EXISTS")
-    }}
-  }}else{{
+    }
+  }else{
     print("EXISTS")
-  }}
-}}else{{
-  try{{
-    {view_def}
+  }
+}else{
+  try{
+    ${view_def}
     Jenkins.instance.addView(view)
     print("ADDED/CHANGED")
-  }}catch(Exception e){{
+  }catch(Exception e){
     print("FAILED")
-  }}
-}}
+  }
+}
 """  # noqa
 
 remove_view_groovy = """\
-view = Jenkins.instance.getView("{view_name}")
-if(view){{
-  try{{
+view = Jenkins.instance.getView("${view_name}")
+if(view){
+  try{
     Jenkins.instance.deleteView(view)
     print("REMOVED")
-  }}catch(Exception e){{
+  }catch(Exception e){
     print("FAILED")
-  }}
-}}else{{
+  }
+}else{
   print("NOT PRESENT")
-}}
+}
 """  # noqa
 
 

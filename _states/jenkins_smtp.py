@@ -1,47 +1,48 @@
 import logging
+
 logger = logging.getLogger(__name__)
 
 set_smtp_groovy = """\
 def result = ""
-for(desc in [Jenkins.getInstance().getDescriptor("hudson.plugins.emailext.ExtendedEmailPublisher"),Jenkins.getInstance().getDescriptor("hudson.tasks.Mailer")]){{
-    if(desc.getSmtpServer().equals("{host}") &&
-       ((desc instanceof hudson.plugins.emailext.ExtendedEmailPublisherDescriptor && desc.getSmtpAuthUsername().equals("{username}")) ||
-        (desc instanceof hudson.tasks.Mailer$DescriptorImpl && desc.getSmtpAuthUserName().equals("{username}"))) &&
-       desc.getSmtpAuthPassword().toString().equals("{password}") &&
-       desc.getSmtpPort().equals("{port}") &&
+for(desc in [Jenkins.getInstance().getDescriptor("hudson.plugins.emailext.ExtendedEmailPublisher"),Jenkins.getInstance().getDescriptor("hudson.tasks.Mailer")]){
+    if(desc.getSmtpServer().equals("${host}") &&
+       ((desc instanceof hudson.plugins.emailext.ExtendedEmailPublisherDescriptor && desc.getSmtpAuthUsername().equals("${username}")) ||
+        (desc instanceof hudson.tasks.Mailer$DescriptorImpl && desc.getSmtpAuthUserName().equals("${username}"))) &&
+       desc.getSmtpAuthPassword().toString().equals("${password}") &&
+       desc.getSmtpPort().equals("${port}") &&
        desc.getUseSsl() == {ssl} &&
-       desc.getCharset().equals("{charset}") &&
-       (!{reply_to_exists} || desc.getReplyAddress().equals("{reply_to}"))){{
+       desc.getCharset().equals("${charset}") &&
+       (!{reply_to_exists} || desc.getReplyAddress().equals("${reply_to}"))){
             result = "EXISTS"
-    }}else{{
-        desc.setSmtpAuth("{username}", "{password}")
+    }else{
+        desc.setSmtpAuth("${username}", "${password}")
         desc.setUseSsl({ssl})
-        if(desc instanceof hudson.plugins.emailext.ExtendedEmailPublisherDescriptor){{
-            desc.setSmtpServer("{host}")
-        }}else{{
-            desc.setSmtpHost("{host}")
-        }}
-        desc.setSmtpPort("{port}")
-        desc.setCharset("{charset}")
-        if({reply_to_exists}){{
-            desc.setReplyToAddress("{reply_to}")
-        }}
+        if(desc instanceof hudson.plugins.emailext.ExtendedEmailPublisherDescriptor){
+            desc.setSmtpServer("${host}")
+        }else{
+            desc.setSmtpHost("${host}")
+        }
+        desc.setSmtpPort("${port}")
+        desc.setCharset("${charset}")
+        if({reply_to_exists}){
+            desc.setReplyToAddress("${reply_to}")
+        }
         desc.save()
         result = "SUCCESS"
-    }}
-}}
+    }
+}
 print(result)
 """ # noqa
 
 set_admin_email_groovy = """
 def jenkinsLocationConfiguration = JenkinsLocationConfiguration.get()
-if(jenkinsLocationConfiguration.getAdminAddress().equals("{email}")){{
+if(jenkinsLocationConfiguration.getAdminAddress().equals("${email}")){
     print("EXISTS")
-}}else{{
-    jenkinsLocationConfiguration.setAdminAddress("{email}")
+}else{
+    jenkinsLocationConfiguration.setAdminAddress("${email}")
     jenkinsLocationConfiguration.save()
     print("SUCCESS")
-}}
+}
 """ # noqa
 
 

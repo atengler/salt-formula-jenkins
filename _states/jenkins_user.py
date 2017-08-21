@@ -1,40 +1,41 @@
 import logging
+
 logger = logging.getLogger(__name__)
 
 create_admin_groovy = u"""\
 import jenkins.model.*
 import hudson.security.*
 def instance = Jenkins.getInstance()
-if(hudson.model.User.getAll().find{{u->u.fullName.equals("{username}")}}){{
+if(hudson.model.User.getAll().find{u->u.fullName.equals("${username}")}){
     print("EXISTS")
-}}else{{
+}else{
     def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-    def result=hudsonRealm.createAccount("{username}","{password}")
+    def result=hudsonRealm.createAccount("${username}","${password}")
     instance.setSecurityRealm(hudsonRealm)
     def strategy = new hudson.security.FullControlOnceLoggedInAuthorizationStrategy()
     strategy.setAllowAnonymousRead(false)
     instance.setAuthorizationStrategy(strategy)
     instance.save()
-    if(result.toString().equals("{username}")){{
+    if(result.toString().equals("${username}")){
         print("SUCCESS")
-    }}else{{
+    }else{
         print("FAILED")
-    }}
-}}
+    }
+}
 """  # noqa
 
 
 create_user_groovy = u"""\
-if(hudson.model.User.getAll().find{{u->u.fullName.equals("{username}")}}){{
+if(hudson.model.User.getAll().find{u->u.fullName.equals("${username}")}){
     print("EXISTS")
-}}else{{
-    def result=jenkins.model.Jenkins.instance.securityRealm.createAccount("{username}", "{password}")
-    if(result.toString().equals("{username}")){{
+}else{
+    def result=jenkins.model.Jenkins.instance.securityRealm.createAccount("${username}", "${password}")
+    if(result.toString().equals("${username}")){
         print("SUCCESS")
-    }}else{{
+    }else{
         print("FAILED")
-    }}
-}}
+    }
+}
 """  # noqa
 
 

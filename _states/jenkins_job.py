@@ -151,7 +151,7 @@ def cleanup(name, jobs, **kwargs):
            'changes': {},
            'comment': "Cleanup not necessary"}
     list_jobs_groovy = """\
-        print(Jenkins.instance.items.collect{{it -> it.name}})
+        print(Jenkins.instance.items.collect{it -> it.name})
     """
     deleted_jobs = []
     if test:
