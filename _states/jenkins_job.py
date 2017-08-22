@@ -27,7 +27,12 @@ def __virtual__():
     '''
     Only load if jenkins_common module exist.
     '''
-    if HAS_JENKINS and 'jenkins_common.call_groovy_script' not in __salt__:
+    if not HAS_JENKINS:
+        return (
+            False,
+            'The jenkins_job state module cannot be loaded: '
+            'python Jenkins API client could not be imported')
+    if 'jenkins_common.call_groovy_script' not in __salt__:
         return (
             False,
             'The jenkins_job state module cannot be loaded: '
