@@ -24,7 +24,7 @@ if(approvedSignatures.contains(signature)){
         print(e)
     }
 }
-""" # noqa
+"""  # noqa
 
 deny_signature_groovy = """\
 import org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval
@@ -82,22 +82,25 @@ def approved(name):
     if test:
         status = "SUCCESS"
         ret['changes'][name] = status
-        ret['comment'] = 'Jenkins script approval config %s %s' % (name, status.lower())
+        ret['comment'] = 'Jenkins script approval config %s %s' % (
+            name, status.lower())
     else:
         call_result = __salt__['jenkins_common.call_groovy_script'](
-            approve_signature_groovy, {"signature":name})
-        if call_result["code"] == 200 and call_result["msg"] in ["SUCCESS", "EXISTS"]:
+            approve_signature_groovy, {"signature": name})
+        if call_result["code"] == 200 and call_result["msg"] in [
+                "SUCCESS", "EXISTS"]:
             status = call_result["msg"]
             if status == "SUCCESS":
                 ret['changes'][name] = status
-            ret['comment'] = 'Jenkins script approval config %s %s' % (name, status.lower())
+            ret['comment'] = 'Jenkins script approval config %s %s' % (
+                name, status.lower())
             result = True
         else:
             status = 'FAILED'
             logger.error(
                 "Jenkins script approval API call failure: %s", call_result["msg"])
             ret['comment'] = 'Jenkins script approval API call failure: %s' % (call_result[
-                                                                           "msg"])
+                "msg"])
     ret['result'] = None if test else result
     return ret
 
@@ -120,21 +123,24 @@ def denied(name):
     if test:
         status = "SUCCESS"
         ret['changes'][name] = status
-        ret['comment'] = 'Jenkins script approval config %s %s' % (name, status.lower())
+        ret['comment'] = 'Jenkins script approval config %s %s' % (
+            name, status.lower())
     else:
         call_result = __salt__['jenkins_common.call_groovy_script'](
-            deny_signature_groovy, {"signature":name})
-        if call_result["code"] == 200 and call_result["msg"] in ["SUCCESS", "NOT PRESENT"]:
+            deny_signature_groovy, {"signature": name})
+        if call_result["code"] == 200 and call_result["msg"] in [
+                "SUCCESS", "NOT PRESENT"]:
             status = call_result["msg"]
             if status == "SUCCESS":
                 ret['changes'][name] = status
-            ret['comment'] = 'Jenkins script approval config %s %s' % (name, status.lower())
+            ret['comment'] = 'Jenkins script approval config %s %s' % (
+                name, status.lower())
             result = True
         else:
             status = 'FAILED'
             logger.error(
                 "Jenkins script approval API call failure: %s", call_result["msg"])
             ret['comment'] = 'Jenkins script approval lib API call failure: %s' % (call_result[
-                                                                           "msg"])
+                "msg"])
     ret['result'] = None if test else result
     return ret

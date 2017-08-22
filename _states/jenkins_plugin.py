@@ -45,7 +45,7 @@ if (installed) {
 }else if(!exists){
   print("FAILED")
 }
-""" # noqa
+"""  # noqa
 
 remove_plugin_groovy = """
 import jenkins.model.*
@@ -75,7 +75,7 @@ if (!actPlugin) {
    }
    print("REMOVED")
 }
-""" # noqa
+"""  # noqa
 
 
 def __virtual__():
@@ -98,7 +98,8 @@ def present(name, restart=False):
     :param restart: do you want to restart jenkins after plugin install?
     :returns: salt-specified state dict
     """
-    return _plugin_call(name, restart, install_plugin_groovy, ["INSTALLED", "EXISTS"])
+    return _plugin_call(name, restart, install_plugin_groovy, [
+                        "INSTALLED", "EXISTS"])
 
 
 def absent(name, restart=False):
@@ -109,7 +110,8 @@ def absent(name, restart=False):
     :param restart: do you want to restart jenkins after plugin remove?
     :returns: salt-specified state dict
     """
-    return _plugin_call(name, restart, remove_plugin_groovy, ["REMOVED", "NOT PRESENT"])
+    return _plugin_call(name, restart, remove_plugin_groovy, [
+                        "REMOVED", "NOT PRESENT"])
 
 
 def _plugin_call(name, restart, template, success_msgs):
@@ -132,13 +134,14 @@ def _plugin_call(name, restart, template, success_msgs):
             status = call_result["msg"]
             if status == success_msgs[0]:
                 ret['changes'][name] = status
-            ret['comment'] = 'Jenkins plugin %s %s%s' % (name, status.lower(), ", jenkins restarted" if status == success_msgs[0] and restart else "")
+            ret['comment'] = 'Jenkins plugin %s %s%s' % (name, status.lower(
+            ), ", jenkins restarted" if status == success_msgs[0] and restart else "")
             result = True
         else:
             status = 'FAILED'
             logger.error(
                 "Jenkins plugin API call failure: %s", call_result["msg"])
             ret['comment'] = 'Jenkins plugin API call failure: %s' % (call_result[
-                                                                           "msg"])
+                "msg"])
     ret['result'] = None if test else result
     return ret

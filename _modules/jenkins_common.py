@@ -33,7 +33,8 @@ def __virtual__():
     return True
 
 
-def call_groovy_script(script, props, username=None, password=None, success_status_codes=[200]):
+def call_groovy_script(script, props, username=None,
+                       password=None, success_status_codes=[200]):
     """
     Common method for call Jenkins groovy script API
 

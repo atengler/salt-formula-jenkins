@@ -93,7 +93,8 @@ def present(name, type="ListView", **kwargs):
     :param type: view type (default ListView)
     :returns: salt-specified state dict
     """
-    return _plugin_call(name, type, add_view_groovy, ["ADDED/CHANGED", "EXISTS"], **kwargs)
+    return _plugin_call(name, type, add_view_groovy, [
+                        "ADDED/CHANGED", "EXISTS"], **kwargs)
 
 
 def absent(name, **kwargs):
@@ -103,7 +104,8 @@ def absent(name, **kwargs):
     :param name: view name
     :returns: salt-specified state dict
     """
-    return _plugin_call(name, None, remove_view_groovy, ["REMOVED", "NOT PRESENT"], **kwargs)
+    return _plugin_call(name, None, remove_view_groovy, [
+                        "REMOVED", "NOT PRESENT"], **kwargs)
 
 
 def _plugin_call(name, type, template, success_msgs, **kwargs):

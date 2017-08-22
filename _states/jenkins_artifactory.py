@@ -69,7 +69,8 @@ def present(name, url, credential_id, **kwargs):
     :param credential_id: artifactory server credential id
     :returns: salt-specified state dict
     """
-    return _plugin_call(name, url, credential_id, add_artifactory_groovy, ["ADDED/CHANGED", "EXISTS"], **kwargs)
+    return _plugin_call(name, url, credential_id, add_artifactory_groovy, [
+                        "ADDED/CHANGED", "EXISTS"], **kwargs)
 
 
 def absent(name, **kwargs):
@@ -79,7 +80,8 @@ def absent(name, **kwargs):
     :param name: artifactory server name
     :returns: salt-specified state dict
     """
-    return _plugin_call(name, None, None, delete_artifactory_groovy, ["REMOVED", "NOT PRESENT"], **kwargs)
+    return _plugin_call(name, None, None, delete_artifactory_groovy, [
+                        "REMOVED", "NOT PRESENT"], **kwargs)
 
 
 def _plugin_call(name, url, credentialsId, template, success_msgs, **kwargs):

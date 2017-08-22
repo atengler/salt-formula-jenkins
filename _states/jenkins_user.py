@@ -76,7 +76,8 @@ def present(name, username, password, admin=False):
     else:
         call_result = __salt__['jenkins_common.call_groovy_script'](
             create_admin_groovy if admin else create_user_groovy, {"username": username, "password": password})
-        if call_result["code"] == 200 and call_result["msg"] in ["SUCCESS", "EXISTS"]:
+        if call_result["code"] == 200 and call_result["msg"] in [
+                "SUCCESS", "EXISTS"]:
             if call_result["msg"] == "SUCCESS":
                 status = "CREATED" if not admin else "ADMIN CREATED"
                 ret['changes'][username] = status

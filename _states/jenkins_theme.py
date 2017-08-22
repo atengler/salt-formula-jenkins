@@ -21,7 +21,8 @@ try{
 }catch(ClassNotFoundException e){
     print("Cannot user SimpleThemeDecorator, maybe Simple Theme Plugin not installed")
 }
-""" # noqa
+"""  # noqa
+
 
 def __virtual__():
     '''
@@ -59,17 +60,19 @@ def config(name, css_url, js_url):
     else:
         call_result = __salt__['jenkins_common.call_groovy_script'](
             set_theme_groovy, {"css_url": css_url, "js_url": js_url})
-        if call_result["code"] == 200 and call_result["msg"] in ["SUCCESS", "EXISTS"]:
+        if call_result["code"] == 200 and call_result["msg"] in [
+                "SUCCESS", "EXISTS"]:
             status = call_result["msg"]
             if status == "SUCCESS":
                 ret['changes'][name] = status
-            ret['comment'] = 'Jenkins theme config %s %s' % (name, status.lower())
+            ret['comment'] = 'Jenkins theme config %s %s' % (
+                name, status.lower())
             result = True
         else:
             status = 'FAILED'
             logger.error(
                 "Jenkins theme API call failure: %s", call_result["msg"])
             ret['comment'] = 'Jenkins theme API call failure: %s' % (call_result[
-                                                                           "msg"])
+                "msg"])
     ret['result'] = None if test else result
     return ret

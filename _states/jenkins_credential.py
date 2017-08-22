@@ -104,7 +104,8 @@ def present(name, scope, username, password="", desc="", key=None):
 
         call_result = __salt__['jenkins_common.call_groovy_script'](
             create_credential_groovy, {"name": name, "username": username, "password": password if password else "", "clazz": clazz, "params": params, "key": key if key else "", "desc": desc if desc else ""})
-        if call_result["code"] == 200 and call_result["msg"] in ["CREATED", "EXISTS"]:
+        if call_result["code"] == 200 and call_result["msg"] in [
+                "CREATED", "EXISTS"]:
             status = call_result["msg"]
             if call_result["msg"] == "CREATED":
                 ret['changes'][name] = status

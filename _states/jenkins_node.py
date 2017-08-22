@@ -115,7 +115,8 @@ def label(name, lbl_text, append=False):
     else:
         call_result = __salt__['jenkins_common.call_groovy_script'](
             create_lbl_groovy, {'name': name, 'lbl_text': lbl_text, 'append': "true" if append else "false"})
-        if call_result["code"] == 200 and call_result["msg"].strip() == lbl_text:
+        if call_result["code"] == 200 and call_result["msg"].strip(
+        ) == lbl_text:
             status = "CREATED"
             ret['changes'][name] = status
             ret['comment'] = 'Label %s %s ' % (name, status.lower())
@@ -130,7 +131,8 @@ def label(name, lbl_text, append=False):
     return ret
 
 
-def present(name, remote_home, launcher, num_executors="1", node_mode="Normal", desc="", labels=[], ret_strategy="Always"):
+def present(name, remote_home, launcher, num_executors="1",
+            node_mode="Normal", desc="", labels=[], ret_strategy="Always"):
     """
     Jenkins node state method
 
@@ -176,7 +178,8 @@ def present(name, remote_home, launcher, num_executors="1", node_mode="Normal", 
                 "launcher": launcher_string,
                 "node_mode": node_mode.upper(),
                 "ret_strategy": ret_strategy if ret_strategy else "Always"})
-        if call_result["code"] == 200 and call_result["msg"] in ["CREATED", "EXISTS"]:
+        if call_result["code"] == 200 and call_result["msg"] in [
+                "CREATED", "EXISTS"]:
             status = call_result["msg"]
             if call_result["msg"] == "CREATED":
                 ret['changes'][name] = status
@@ -217,7 +220,8 @@ def setup_master(name, num_executors="1", node_mode="Normal", labels=[]):
     else:
         call_result = __salt__['jenkins_common.call_groovy_script'](
             configure_master_groovy, {'num_executors': num_executors, 'labels': " ".join(labels), 'node_mode': node_mode.upper()})
-        if call_result["code"] == 200 and call_result["msg"] in ["CREATED", "EXISTS"]:
+        if call_result["code"] == 200 and call_result["msg"] in [
+                "CREATED", "EXISTS"]:
             status = call_result["msg"]
             if status == "CREATED":
                 ret['changes'][name] = status

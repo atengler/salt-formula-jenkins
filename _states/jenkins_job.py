@@ -15,10 +15,10 @@ import hashlib
 
 # Jenkins
 try:
-  import jenkins
-  HAS_JENKINS = True
+    import jenkins
+    HAS_JENKINS = True
 except ImportError:
-  HAS_JENKINS = False
+    HAS_JENKINS = False
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +70,6 @@ def present(name,
                 _job_exists = False
             else:
                 raise e
-
 
         if _job_exists:
             buf = six.moves.StringIO(_current_job_config)
@@ -159,7 +158,8 @@ def cleanup(name, jobs, **kwargs):
         ret['changes'][name] = status
         ret['comment'] = 'Jobs %s' % status.lower()
     else:
-        call_result = __salt__['jenkins_common.call_groovy_script'](list_jobs_groovy,{})
+        call_result = __salt__['jenkins_common.call_groovy_script'](
+            list_jobs_groovy, {})
         if call_result["code"] == 200:
             existing_jobs = call_result["msg"]
             if existing_jobs:
